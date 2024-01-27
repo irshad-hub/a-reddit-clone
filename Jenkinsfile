@@ -8,12 +8,11 @@ pipeline {
         SCANNER_HOME = tool 'sonar-scanner'
         APP_NAME = "reddit-clone-pipeline"
         RELEASE = "1.0.0"
-        DOCKER_REGISTRY = 'https://hub.docker.com/'  // Docker Hub registry
-        DOCKER_USER = 'irshadahmed'
+        DOCKER_USER = "irshadahmed"
         DOCKER_PASS = 'dckr_pat_fOkem3FMwoeJ_y6z6kyjZsc8vWc'
         IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
-    
+	JENKINS_API_TOKEN = credentials("JENKINS_API_TOKEN")
     }
     stages {
         stage('clean workspace') {
@@ -51,42 +50,34 @@ pipeline {
                 sh "trivy fs . > trivyfs.txt"
              }
          }
-        stage('build and push docker image') {
-            steps {
-                script {
-                    def dockerImage
-
-                    // Log in to Docker Hub
-                    sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}"
-
-                    // Build Docker image
-                    dockerImage = docker.build "${IMAGE_NAME}:${IMAGE_TAG}"
-
-                    // Push Docker image
-                    sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
-                    sh "docker push ${IMAGE_NAME}:latest"
-                  
-                    
-                   
-                }
+	 stage("Build & Push Docker Image") {
+             steps {
+                 script {
+                     docker.withRegistry('',DOCKER_PASS) {
+                         docker_image = docker.build "${IMAGE_NAME}"
+                     }
+                     docker.withRegistry('',DOCKER_PASS) {
+                         docker_image.push("${IMAGE_TAG}")
+                         docker_image.push('latest')
+                     }
+                 }
              }
          }
-         stage('TRIVY image SCAN') {
-            steps {
-                script {
-                    sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image irshadahmed/reddit-clone-pipeline:latest --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table > trivyimage.txt')
-                }
+	 stage("Trivy Image Scan") {
+             steps {
+                 script {
+	              sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ashfaque9x/reddit-clone-pipeline:latest --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table > trivyimage.txt')
+                 }
              }
          }
-        stage ('Cleanup Artifacts') {
+	 stage ('Cleanup Artifacts') {
              steps {
                  script {
                       sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
                       sh "docker rmi ${IMAGE_NAME}:latest"
-                      
                  }
              }
-         }
+     }
     
    }
 }
