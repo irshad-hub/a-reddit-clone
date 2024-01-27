@@ -9,8 +9,8 @@ pipeline {
         APP_NAME = "reddit-clone-pipeline"
         RELEASE = "1.0.0"
         DOCKER_REGISTRY = 'https://hub.docker.com/'  // Docker Hub registry
-        DOCKER_USER = credentials('irshadahmed')
-        DOCKER_PASS = credentials('dckr_pat_fOkem3FMwoeJ_y6z6kyjZsc8vWc')
+        DOCKER_USER = 'irshadahmed'
+        DOCKER_PASS = 'dckr_pat_fOkem3FMwoeJ_y6z6kyjZsc8vWc'
         IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
