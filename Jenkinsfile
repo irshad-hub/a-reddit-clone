@@ -9,7 +9,7 @@ pipeline {
         APP_NAME = "reddit-clone-pipeline"
         RELEASE = "1.0.0"
         DOCKER_USER = "irshadahmed"
-        DOCKER_PASS_CREDENTIALS = 'docker' // Jenkins Credential ID for Docker Hub
+        DOCKER_PASS_CREDENTIALS = 'dckr_pat_KRh2ndDJDSksmq9YEK6x6FhV3_E' // Jenkins Credential ID for Docker Hub
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
