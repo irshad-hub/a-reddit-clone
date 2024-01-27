@@ -8,8 +8,9 @@ pipeline {
         SCANNER_HOME = tool 'sonar-scanner'
         APP_NAME = "reddit-clone-pipeline"
         RELEASE = "1.0.0"
+        DOCKER_REGISTRY = 'docker.io'  // Docker Hub registry
         DOCKER_USER = "irshadahmed"
-        DOCKER_PASS = "dckr_pat_a0cutFRGVnaVZWm_vYD3lOmEBgg"
+        DOCKER_PASS = 'dckr_pat_a0cutFRGVnaVZWm_vYD3lOmEBgg'
         IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
@@ -52,10 +53,15 @@ pipeline {
         stage('build and push docker image') {
             steps {
                 script {
-                    docker.withRegistry('',DOCKER_PASS) {
+                    def dockerImage 
+                    
+                    // build docker image
+                    docker.withRegistry("${DOCKER_REGISTRY}", "${DOCKER_USER}:${DOCKER_PASS}") {
                         docker_image = docker.build "${IMAGE_NAME}"
                     }
-                    docker.withRegistry('',DOCKER_PASS) {
+
+                    //push docker image
+                    docker.withRegistry("${DOCKER_REGISTRY}", "${DOCKER_USER}:${DOCKER_PASS}") {
                          docker_image.push("${IMAGE_TAG}")
                          docker_image.push('latest')
                     }
