@@ -13,7 +13,7 @@ pipeline {
         DOCKER_PASS = 'dckr_pat_fOkem3FMwoeJ_y6z6kyjZsc8vWc'
         IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
-        JENKINS_API_TOKEN = '11dbd61c8f4400b42b3754e0c946baede0"
+    
     }
     stages {
         stage('clean workspace') {
