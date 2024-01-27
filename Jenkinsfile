@@ -13,6 +13,7 @@ pipeline {
         DOCKER_PASS = 'dckr_pat_fOkem3FMwoeJ_y6z6kyjZsc8vWc'
         IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+        JENKINS_API_TOKEN = credentials("JENKINS_API_TOKEN")
     }
     stages {
         stage('clean workspace') {
@@ -71,9 +72,23 @@ pipeline {
          stage('TRIVY image SCAN') {
             steps {
                 script {
-                    sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image irshadahmed/reddit-clone-pipeline:latest --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table > trivyimage.txt')
+                    sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image irshadahmed/reddit-clone-pipeline --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table > trivyimage.txt')
                 }
              }
+         }
+        stage ('Cleanup Artifacts') {
+             steps {
+                 script {
+                      sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
+                 }
+             }
+         }
+        stage("Trigger CD Pipeline") {
+            steps {
+                script {
+                    sh "curl -v -k --user clouduser:${JENKINS_API_TOKEN} -X POST -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' --data 'IMAGE_TAG=${IMAGE_TAG}' 'ec2-65-2-187-142.ap-south-1.compute.amazonaws.com:8080/job/Reddit-Clone-CD/buildWithParameters?token=gitops-token'"
+                }
+            }
          }
     
    }
