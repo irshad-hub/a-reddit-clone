@@ -53,18 +53,18 @@ pipeline {
         stage('build and push docker image') {
             steps {
                 script {
-                    def dockerImage 
-                    
-                    // build docker image
-                    docker.withRegistry("${DOCKER_REGISTRY}", "${DOCKER_USER}:${DOCKER_PASS}") {
-                        docker_image = docker.build "${IMAGE_NAME}"
-                    }
+                    def dockerImage
 
-                    //push docker image
-                    docker.withRegistry("${DOCKER_REGISTRY}", "${DOCKER_USER}:${DOCKER_PASS}") {
-                         docker_image.push("${IMAGE_TAG}")
-                         docker_image.push('latest')
-                    }
+                    // Log in to Docker Hub
+                    sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}"
+
+                    // Build Docker image
+                    dockerImage = docker.build "${IMAGE_NAME}"
+
+                    // Push Docker image
+                    sh "docker push ${IMAGE_TAG}"
+                    sh "docker push $('latest')
+                   
                 }
              }
          }
