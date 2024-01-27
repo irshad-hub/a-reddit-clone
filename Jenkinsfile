@@ -63,7 +63,7 @@ pipeline {
 
                     // Push Docker image
                     sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
-                    sh "docker push ('latest')"
+                    
                    
                 }
              }
