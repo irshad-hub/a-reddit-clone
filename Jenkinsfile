@@ -59,10 +59,10 @@ pipeline {
                     sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}"
 
                     // Build Docker image
-                    dockerImage = docker.build "${IMAGE_NAME}"
+                    dockerImage = docker.build "${IMAGE_NAME}:${IMAGE_TAG}"
 
                     // Push Docker image
-                    sh "docker push ${IMAGE_TAG}"
+                    sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
                     sh "docker push ('latest')"
                    
                 }
