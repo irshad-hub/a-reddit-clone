@@ -75,7 +75,7 @@ pipeline {
             }
         }
         post {
-        always {
+          always {
            emailext attachLog: true,
                subject: "'${currentBuild.result}'",
                body: "Project: ${env.JOB_NAME}<br/>" +
@@ -83,7 +83,7 @@ pipeline {
                    "URL: ${env.BUILD_URL}<br/>",
                to: 'gsirshadahmed8@gmail.com',                              
                attachmentsPattern: 'trivyfs.txt,trivyimage.txt'
+          }
         }
-     }
     }
 }
