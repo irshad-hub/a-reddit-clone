@@ -12,6 +12,7 @@ pipeline {
         DOCKER_PASS_CREDENTIALS = 'dckr_pat_KRh2ndDJDSksmq9YEK6x6FhV3_E' // Jenkins Credential ID for Docker Hub
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+        JENKINS_API_TOKEN = credentials("JENKINS_API_TOKEN")
     }
     stages {
         stage('clean workspace') {
