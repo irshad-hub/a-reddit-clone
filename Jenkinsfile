@@ -74,6 +74,13 @@ pipeline {
                 }
             }
         }
+        stage("Trigger CD Pipeline") {
+            steps {
+                script {
+                    sh "curl -v -k --user devops:${JENKINS_API_TOKEN} -X POST -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' --data 'IMAGE_TAG=${IMAGE_TAG}' 'ec2-52-66-16-34.ap-south-1.compute.amazonaws.com:8080/job/Reddit-CD/buildWithParameters?token=gitops-token'"
+                }
+            }
+         }
         post {
           always {
            emailext attachLog: true,
